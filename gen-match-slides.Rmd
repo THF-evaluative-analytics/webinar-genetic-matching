@@ -1,0 +1,182 @@
+---
+title: "Genetic matching using R"
+subtitle: ""  
+author: 
+  - "Emma Vestesson"
+  - "Paris Pariza"
+date: ''
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+
+library(tidyverse)
+library(gtsummary)
+library(skimr)
+library(broom)
+library(Matching)
+library(rgenoud)
+library(parallel)
+df <- readRDS(here::here('data', "df.rds"))
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+
+
+style_duo_accent(
+  primary_color = "#DD0031",
+  secondary_color = "#7EBFDA",
+  inverse_header_color = "#744284",
+)
+```
+
+# Prep
+
+Code and slides available on github https://github.com/THF-evaluative-analytics/webinar-genetic-matching
+
+We will be using some custom created data so you will need to download the project if you want to follow along
+
+Install all packages in the workshop_for_participants.Rmd (in the R folder)
+
+
+---
+
+# About the improvement analytics unit
+
+- an innovative partnership between NHS England and the Health Foundation that provides robust analysis to help the NHS improve care for patients. 
+
+- Our aim is that our analysis helps the local NHS and its partners identify whether implementation of an initiative is having the  desired effect, or needs to change to succeed. 
+
+---
+# Agenda
+
+- R and rmarkdown refresher
+- 
+---
+# R refresher
+
+R Studio projects make it straightforward to divide your work into multiple contexts, each with their own working directory, workspace, history, and source documents. 
+
+This means that:
+
+- The .Rprofile file in the project's main directory is sourced by R.
+- The current working directory is set to the project directory.
+- Previously edited source documents or settings are restored.
+
+---
+
+- tidyverse is collection of R packages based on tidy data principles.
+- dplyr package allows simple commands for data manipulation (select(), filter(), mutate(), group_by()).
+- pipes (%>%) simplify R code by passing data through functions without nesting. 
+
+---
+
+# Rmarkdown
+
+R Markdown is a file format for making dynamic documents with R and it contains chunks of embedded R code.
+- You can knit the file and you can convert the file into an HTML, PDF, or Microsoft Word file.
+- Use one hashtag, #, to create a header or two, ##, to create a second level header, and so on.
+- To omit the code from the final report, add the argument echo = FALSE inside the {r}. 
+- To avoid evaluating a chunk of R code, add the argument eval = FALSE inside the {r}.
+
+---
+
+# Exploratory data analysis
+
+(0) Open the “project.Rproj”, then the file “workshop_participants.Rmd” and load the libraries required
+
+(1) Read the dataset “df.rds” in R
+“df” is a completely fake data set that we have generated for this workshop and it is intended to replicate a patient level data where some patients received an intervention aimed at reducing a negative outcome. 
+
+
+---
+
+# Which variable is **not** in the data set?
+
+a)  `hypertension`
+
+b)  `diabetes`
+
+c)  `stroke`
+
+
+
+---
+
+```{r age-histogram, results = "hide"}
+median_df <- df %>% 
+  group_by(intervention) %>% 
+  summarise(age=median(age))
+
+ggplot(df, aes(x=age, ..density..), fill='pink') + geom_histogram(binwidth=1) +  
+  geom_vline(data=median_df, aes(xintercept=age),   col='purple', size=1) +  geom_text(data=median_df, aes(x=age, y=0.1, label= paste0('Median:', round(age,digits=0))),                         hjust=-0.5, size=3) + facet_wrap(~intervention) +                           theme_minimal() +                            theme(legend.position = "none")
+```
+
+
+---
+# Retrospective matched control studies
+
+Randomised control designs, are the “gold standard” of causal impact evaluation. Often these are impractical, unethical or irrelevant when assessing the impact of complex changes to health delivery.
+
+Observational studies are an alternative approach, where intervention and control groups are as similar as possible. 
+
+One approach to do this is by matching, which can reduce bias in the estimation of the treatment effect. 
+
+Types of matching: 
+
+	~ Nearest neighbour matching: 1-1
+	~ Propensity score matching
+	~ Genetic Matching
+	
+---
+
+### The impact of providing enhanced support for care home residents in Rushcliffe (IAU 2017): 
+Care home residents receiving enhance support in Rushcliffe matched with individuals with similar characteristics living in care homes in comparable 	areas elsewhere the country.
+
+### Craniectomy in patients with cerebral artery stroke (Fung et al. 2012): 
+Patients undergoing craniectomy for cerebral artery stroke were matched to patients undergoing best medical treatment on a range of clinical, 	radiological and surgical characteristics.
+
+
+
+---
+class: middle
+
+# Genetic matching
+---
+## Deciding what variables to include to the matching
+
+- Priority should be given to variables predictive of the outcome.
+
+--
+
+- Never include variables that may have been affected by the treatment of interest.
+
+--
+
+- The more variables you include, the longer it will take for matching to run.
+
+--
+
+- There may still be concern regarding unobserved differences between the intervention and control groups.
+---
+# Other things to consider
+ 
+Match with replacement or not?
+
+--
+
+How many controls for each treated individual? 
+
+--
+- Use local or non-local controls?
+
