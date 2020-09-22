@@ -40,30 +40,63 @@ style_duo_accent(
 )
 ```
 
+
+# What we will cover today
+
+- Set-up
+--
+
+- Introduction
+
+--
+
+- R and rmarkdown refresher
+
+--
+
+- Some theory
+
+--
+
+- Running some R code
+
+
+---
+background-image: url(https://cdn.pixabay.com/photo/2018/06/29/08/15/doodle-3505459_960_720.png)
+
+---
 # Prep
 
 Code and slides available on github https://github.com/THF-evaluative-analytics/webinar-genetic-matching
 
 We will be using some custom created data so you will need to download the project if you want to follow along
 
+If you don't have Rstudio installed try using rstudio.cloud
+
 Install all packages in the workshop_for_participants.Rmd (in the R folder)
 
+Go to sli.do and enter the code "IAUgeneticmatching1"
 
 ---
 
 # About the improvement analytics unit
 
-- an innovative partnership between NHS England and the Health Foundation that provides robust analysis to help the NHS improve care for patients. 
+We are an innovative partnership between NHS England and the Health Foundation that provides robust analysis to help the NHS improve care for patients. 
 
-- Our aim is that our analysis helps the local NHS and its partners identify whether implementation of an initiative is having the  desired effect, or needs to change to succeed. 
 
----
-# Agenda
+Our aim is that our analysis helps the local NHS and its partners identify whether implementation of an initiative is having the  desired effect, or needs to change to succeed. 
 
-- R and rmarkdown refresher
-- 
+
+
 ---
 # R refresher
+
+- R is a statistical programming language 
+
+
+- Rstudio is one of the most popular IDEs used with R
+
+--
 
 R Studio projects make it straightforward to divide your work into multiple contexts, each with their own working directory, workspace, history, and source documents. 
 
@@ -74,7 +107,7 @@ This means that:
 - Previously edited source documents or settings are restored.
 
 ---
-
+# Tidyverse
 - tidyverse is collection of R packages based on tidy data principles.
 - dplyr package allows simple commands for data manipulation (select(), filter(), mutate(), group_by()).
 - pipes (%>%) simplify R code by passing data through functions without nesting. 
@@ -149,9 +182,17 @@ Patients undergoing craniectomy for cerebral artery stroke were matched to patie
 
 
 ---
-class: middle
 
 # Genetic matching
+
+Nothing to do with genes
+
+--
+
+Genetic matching automates the process of finding a good matching solution. 
+
+The idea is to use a genetic search algorithm to find a set of weights for each covariate such that the a version of optimal balance is achieved after matching.
+
 ---
 ## Deciding what variables to include to the matching
 
@@ -180,3 +221,7 @@ How many controls for each treated individual?
 --
 - Use local or non-local controls?
 
+---
+class: middle, inverse
+
+# Regression analysis 

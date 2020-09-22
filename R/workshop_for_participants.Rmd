@@ -194,7 +194,6 @@ SMD_full_df <-  map(list(df=df, matched_df=matched_df), ~MatchBalance(formula1, 
 
 ```{r, eval=FALSE}
 
-flextable::flextable(SMD_full_df)
 ```
 
 
