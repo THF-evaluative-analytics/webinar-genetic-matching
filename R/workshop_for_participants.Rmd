@@ -97,7 +97,7 @@ We have wrapped the genetic matching code in a function to avoid clogging up our
 
 We do not include the outcome in the matching.
 
-```{r, eval=F}
+```{r, eval=FALSE}
 
 base_match_var <- c("hypertension", "diabetes", "dementia", "age" , 'male')
 
@@ -166,6 +166,7 @@ matched_df <- dat_match_base_exact_none_replacement$matched_df
 ```{r load-saved-data}
 matched_df <- readRDS(here::here('data', "matched_df.rds"))
 dat_match_base_exact_none_replacement <- readRDS(here::here('data', "dat_match_base_exact_none_replacement.rds"))
+base_match_var <- c("hypertension", "diabetes", "dementia", "age" , 'male')
 ```
 
 
@@ -203,9 +204,12 @@ SMD_full_df <-  map(list(df=df, matched_df=matched_df), ~MatchBalance(formula1, 
 ggplot(SMD_full_df) + 
          geom_point(aes(y=base_match_var, x=df, col="blue")) +
          geom_point(aes(y=base_match_var, x=matched_df, col="red")) +   geom_vline(xintercept = 10, color = "black", size = 0.1) +
-         geom_vline(xintercept = -10, color = "black", size = 0.1) + ggtitle("SMD") + xlim(-60,60) + 
+         geom_vline(xintercept = -10, color = "black", size = 0.1) + 
+  labs(title = 'Balance assesment', y = '', x = 'SMD' ) +
+  xlim(-60,60) + 
          scale_color_manual(name="",values = c(rgb(221, 000, 049,maxColorValue = 255),rgb(083, 169, 205,maxColorValue = 255)),
                             labels=c("Before matching", "After matching")) + 
+  theme_minimal() +
        theme(text = element_text(size=10),
              axis.text.x = element_text(size = 10), 
              axis.text.y = element_text(size = 8))
