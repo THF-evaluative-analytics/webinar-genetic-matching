@@ -11,9 +11,9 @@ output:
 
 (0) Load libraries
 
-```{r}
+```{r, echo=FALSE}
 library(tidyverse)
-library(tableone)
+library(gtsummary)
 library(skimr)
 library(broom)
 library(Matching)
@@ -58,18 +58,14 @@ skim(df) %>%
   summary()
 ```
 
-(4) Create a nice table with descriptive statistics using `CreateTableOne` from the `tableone` package. Include `smoking_unobserved`. 
+(4) Create a nice table with descriptive statistics using `tbl_summaru` from the `tableone` package. Include `smoking_unobserved`. 
 
 ```{r}
 all_vars <- c("male",  "hypertension", "diabetes", "dementia", 'outcome', "smoking_unobserved")
 factor_vars <- c("hypertension", "male", "diabetes", "dementia")
 base_match_var <- c("hypertension", "diabetes", "dementia", "age" , 'male')
 
-table1_bm<- CreateTableOne(data=df, factorVars = factor_vars, vars= all_vars , strata = 'intervention')
-print(table1_bm)
-# only run this if you want to save the table in a .csv file
-print(table1_bm, quote = FALSE, noSpaces = TRUE, printToggle = FALSE) %>% 
-write.csv("table1_bm.csv")
+table1_bm <- tbl_summary(data=df, by = intervention)
 
 ```
 
