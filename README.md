@@ -6,11 +6,7 @@ Here you can find all resources for the IAU workshop on running genetic matching
 Link to [slides](https://thf-evaluative-analytics.github.io/webinar-genetic-matching/gen-match-slides.html#1)
 
 
-## Data source
-
-This project does not use any real data. We built a small fake dataset intended to replicate a patient level data where some patients received an intervention aimed at reducing a negative outcome.
-
-## How does it work?
+## Workshop instructions
 
 To code along in the workshop you need to download this repo. You can do this either by cloning it or downloading a zip folder by clicking the green code button. You also need to have the following packages installed and recently updated (in the last year). 
 
