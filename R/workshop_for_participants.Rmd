@@ -39,20 +39,21 @@ Let's start by looking at the data.
 (2) Look at your data using `View()` or by clicking on df in the environment
 
 ```{r, eval=FALSE}
-
+View(df)
 ```
 
 
 (3) Look at your data using the `skimr` package. The main function is `skim` but you can also combine it with `summary`. 
 
 ```{r, eval=FALSE}
-
+skim(df)
 ```
 
 
 (4) Create a nice table with descriptive statistics using `tbl_summary` from the `gtsummary` package. Include `smoking_unobserved`. 
 
 ```{r}
+tbl_summary(df, by = intervention)
 
 
 ```
@@ -61,6 +62,8 @@ Let's start by looking at the data.
 (5) Most variables are binary but let's take a closer look at `age`. Plot the age distribution for the intervention and comparison groups separately. 
 
 ```{r, eval=FALSE}
+
+
 
 ```
 
@@ -71,7 +74,7 @@ Let's start by looking at the data.
 
 ```{r}
 crude_bm <- lm(outcome~ intervention, data=df)
-crude_bm_tidy <- tidy(crude_bm, conf.int = TRUE)
+tidy(crude_bm, conf.int = TRUE)
 ```
 
 
@@ -82,10 +85,9 @@ crude_bm_tidy <- tidy(crude_bm, conf.int = TRUE)
 Replace XXXXXXXXXXXX by the variables that you want to include in your regression. Remember that you can't use `smoking_unobserved`!
 
 ```{r, eval=F}
-adj_bm <- lm(outcome ~ intervention + XXXXXXXXXXXXXXXXXXXXXXXXXXXX, data=df)
-
-adj_bm_tidy <- tidy(adj_bm, conf.int = TRUE)
-
+adj_bm <- lm(outcome ~ intervention + XXXXX , data=df)
+broom::tidy(adj_bm, conf.int = TRUE)
+tbl_regression(adj_bm)
 ```
 
 
@@ -197,6 +199,12 @@ SMD_full_df <-  map(list(df=df, matched_df=matched_df), ~MatchBalance(formula1, 
 
 ```
 
+```{r}
+ggplot(matched_df, aes(x=age)) + geom_density() + facet_grid(~intervention)
+```
+
+
+
 
 (12) Create a graph showing the SMDs before and after matching
 
@@ -219,7 +227,7 @@ ggplot(SMD_full_df) +
 (13) Look at descriptive statistics. You can use the `gtsummary` package again but remember to change the data set to `matched_df`. 
 
 ```{r, eval=FALSE}
-
+tbl_summary(matched_df, by = intervention)
 ```
 
 
@@ -228,7 +236,9 @@ ggplot(SMD_full_df) +
 
 (14) Run the regression with only intervention on the right hand side. Remember to use the `matched_df` data set. 
 ```{r, eval=FALSE}
+crude_am <- lm(outcome ~ intervention, data = matched_df)
 
+tidy(crude_am)
 ```
 
 
@@ -238,6 +248,9 @@ ggplot(SMD_full_df) +
 (15) Run the regression with all the known covariates (including intervention) on the right hand side.
 
 ```{r, eval=FALSE}
+adj_am <- lm(outcome ~ intervention + hypertension + male + diabetes + dementia + age , data = matched_df)
+
+tidy(adj_am, conf.int = TRUE)
 
 ```
 
